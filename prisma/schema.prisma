@@ -23,7 +23,7 @@ model Post {
   createdAt DateTime @default(now())
 
   parentId  String?
-  parent    Post?    @relation("PostTree", fields: [parentId], references: [id])
+  parent    Post?    @relation("PostTree", fields: [parentId], references: [id], onDelete: Cascade)
   children  Post[]   @relation("PostTree")
 
   user      User     @relation(fields: [userId], references: [id])

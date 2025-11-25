@@ -4,21 +4,33 @@ import { useEffect, useState, useCallback } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import CalculationTree from '@/components/CalculationTree';
 import StartNumberForm from '@/components/StartNumberForm';
+import SkeletonTree from '@/components/SkeletonTree';
 import type { PostTree } from '@/types/post';
 
 export default function Home() {
   const [posts, setPosts] = useState<PostTree[]>([]);
+  const [loading, setLoading] = useState(true); // only for first load
+  const [refreshing, setRefreshing] = useState(false); // for add/delete refresh
   const { token, logoutUser } = useAuth();
 
-  const loadPosts = useCallback(async () => {
+  const loadPosts = useCallback(async (isInitial = false) => {
+    if (isInitial) {
+      setLoading(true);
+    } else {
+      setRefreshing(true); // refresh state (no skeleton)
+    }
+
     const res = await fetch('/api/posts');
     const data = await res.json();
+
     setPosts(data);
+    setLoading(false);
+    setRefreshing(false);
   }, []);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    loadPosts();
+    loadPosts(true); // first load
   }, [loadPosts]);
 
   return (
@@ -46,16 +58,27 @@ export default function Home() {
         )}
       </header>
 
-      {/* Content Container */}
+      {/* Content */}
       <main className="max-w-2xl w-full mx-auto bg-white rounded-xl shadow-sm p-4 border border-gray-200">
         {token && (
           <div className="mb-4">
-            <StartNumberForm onSuccess={loadPosts} />
+            <StartNumberForm
+              onSuccess={() => loadPosts(false)}
+              refreshing={refreshing}
+            />
           </div>
         )}
 
         <div className="mt-3">
-          <CalculationTree posts={posts} onRefresh={loadPosts} />
+          {loading ? (
+            <SkeletonTree /> // only first load
+          ) : (
+            <CalculationTree
+              posts={posts}
+              onRefresh={() => loadPosts(false)}
+              refreshing={refreshing}
+            />
+          )}
         </div>
       </main>
     </div>

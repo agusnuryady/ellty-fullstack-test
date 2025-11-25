@@ -6,7 +6,7 @@ import { saveAuth } from '@/lib/auth';
 import { useAuth } from '@/context/AuthContext';
 
 export default function RegisterPage() {
-  const { setToken } = useAuth();
+  const { setToken, setUser } = useAuth();
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -32,6 +32,7 @@ export default function RegisterPage() {
 
     saveAuth(data.token);
     setToken(data.token);
+    setUser(data.user);
     router.push('/');
   }
 

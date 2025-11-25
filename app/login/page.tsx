@@ -6,7 +6,7 @@ import { saveAuth } from '@/lib/auth';
 import { useAuth } from '@/context/AuthContext';
 
 export default function LoginPage() {
-  const { setToken } = useAuth();
+  const { setToken, setUser } = useAuth();
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -31,6 +31,7 @@ export default function LoginPage() {
 
     saveAuth(data.token);
     setToken(data.token);
+    setUser(data.user);
     router.push('/');
   }
 
