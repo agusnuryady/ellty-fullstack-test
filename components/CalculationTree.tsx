@@ -3,7 +3,6 @@
 import { useAuth } from '@/context/AuthContext';
 import OperationForm from './OperationForm';
 import type { PostTree } from '@/types/post';
-import { useState } from 'react';
 
 interface CalculationTreeProps {
   posts: PostTree[];
